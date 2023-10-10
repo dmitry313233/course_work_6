@@ -1,0 +1,29 @@
+{% extends 'client/base.html' %}
+{% block content %}
+
+<!-- Example row of columns -->
+
+<div class="container">
+    <div class="col-3 mb-3">
+        <a href="{% url 'client:mailing_message_create' %}" type="button"
+           class="btn btn-lg btn-block btn-outline-success">Создать сообщение</a>
+    </div>
+    <div class="row text-center">
+        {% for object in object_list %}
+        <div class="col-4">
+            <div class="card mb-4 box-shadow">
+                <div class="card-header">
+                    <h1>Сообщение</h1>
+                </div>
+                <div class="card-body">
+                    <h4 class="card-title pricing-card-title">Тема сообщения: {{ object.subject }}</h4>
+                    <p><a class="btn btn-outline-danger"
+                          href="{% url 'client:mailing_message_delete' object.pk %}"
+                          role="button">Удалить сообщение &raquo;</a></p>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

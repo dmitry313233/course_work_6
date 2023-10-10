@@ -1,0 +1,20 @@
+{% extends 'client/base.html' %}
+{% block content %}
+
+<form method="post" class="row">
+    <div class="col-6">
+        <div class="card">
+            <div class="card-header"><h2 class="card-title">
+                Добавить рассылку
+            </h2></div>
+            <div class="card-body">
+                {% csrf_token %}
+                {{ form.as_p }}
+            </div>
+            <div class="card-footer">
+                <button type="submit" class="btn btn-success">Сохранить</button>
+                <a href="{% url 'client:mailingSettings_forms' %}" type="button" class="btn btn-success">Вернуться</a></div>
+        </div>
+    </div>
+</form>
+{% endblock %}

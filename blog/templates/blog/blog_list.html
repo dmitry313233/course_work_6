@@ -1,0 +1,32 @@
+{% extends 'client/base.html' %}
+{% block content %}
+
+
+<div class="container">
+    <div class="col-3 mb-3">
+        <a href="{% url 'blog:blog_create' %}" type="button"
+           class="btn btn-lg btn-block btn-outline-success">Создать статью</a>
+    </div>
+    <div class="row text-center">
+        {% for object in object_list %}
+        <div class="col-4">
+            <div class="card mb-4 box-shadow">
+                <div class="card-header">
+                    <h1>Статья</h1>
+                        <div class="card-body">
+                            <h4 class="card-title pricing-card-title">Заголовок статьи: {{ object.title }}</h4>
+                            <h4 class="card-title pricing-card-title">Просмотры: {{ object.count_view }}</h4>
+                            <p><a class="btn btn-outline-primary"
+                                  href="{% url 'blog:blog_detail' object.pk %}"
+                                  role="button">View</a></p>
+                            <p><a class="btn btn-outline-danger"
+                                  href="{% url 'blog:blog_delete' object.pk %}"
+                                  role="button">Удалить блог &raquo;</a></p>
+                        </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

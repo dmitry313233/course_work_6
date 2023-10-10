@@ -1,0 +1,41 @@
+{% extends 'client/base.html' %}
+{% block content %}
+
+
+<div class="container">
+    <div class="col-3 mb-3">
+        <a href="{% url 'client:create_form' %}" type="button"
+           class="btn btn-lg btn-block btn-outline-success">Создать рассылку</a>
+    </div>
+    <div class="row text-center">
+        {% for object in object_list %}
+        <div class="col-4">
+            <div class="card mb-4 box-shadow">
+                <div class="card-header">
+                    <h1>Рассылка</h1>
+                        <div class="card-body">
+                            <h4 class="card-title pricing-card-title">Начало рассылки: {{ object.start_time }}</h4>
+                            <h4 class="card-title pricing-card-title">Конец рассылки: {{ object.end_time }}</h4>
+                            <p><a class="btn btn-outline-primary"
+                                  href="{% url 'client:mailingSettings_update' object.pk %}"
+                                  role="button">Редактирование рассылку</a></p>
+                            <p><a class="btn btn-outline-danger"
+                                  href="{% url 'client:mailingSettings_delete' object.pk %}"
+                                  role="button">Удалить рассылку &raquo;</a></p>
+                            {% if object.status == 'Создана' %}
+                            <p><a class="btn btn-outline-warning"
+                                  href="{% url 'client:switch_status_newsletter' object.pk %}"
+                                  role="button">Заблокировать рассылку &raquo;</a></p>
+                            {% elif object.status == 'Завершена' %}
+                            <p><a class="btn btn-outline-warning"
+                                  href="{% url 'client:switch_status_newsletter' object.pk %}"
+                                  role="button">Разблокировать рассылку &raquo;</a></p>
+                            {% endif %}
+                        </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

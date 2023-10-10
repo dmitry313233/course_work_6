@@ -1,0 +1,32 @@
+{% extends 'client/base.html' %}
+{% block content %}
+
+
+<div class="container">
+    <div class="col-3 mb-3">
+        <a href="{% url 'client:create_client' %}" type="button"
+           class="btn btn-lg btn-block btn-outline-success">Создать клиента</a>
+    </div>
+    <div class="row text-center">
+        {% for object in object_list %}
+        <div class="col-4">
+            <div class="card mb-4 box-shadow">
+                <div class="card-header">
+                    <h1>Клиент</h1>
+                        <div class="card-body">
+                            <h4 class="card-title pricing-card-title">Клиент: {{ object.full_name }}</h4>
+                            <h4 class="card-title pricing-card-title">Почта клиента: {{ object.email }}</h4>
+                            <p><a class="btn btn-outline-primary"
+                                  href="{% url 'client:client_update' object.pk %}"
+                                  role="button">Редактирование клиента</a></p>
+                            <p><a class="btn btn-outline-danger"
+                                  href="{% url 'client:client_delete' object.pk %}"
+                                  role="button">Удалить клиента &raquo;</a></p>
+                        </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

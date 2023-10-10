@@ -1,0 +1,29 @@
+{% extends 'client/base.html' %}
+
+{% block content %}
+<form method="post" class="row">
+    <div class="col-6">
+        <div class="card">
+            <div class="card-header"><h2 class="card-title">
+                Верификация
+            </h2></div>
+            <div class="card-body">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email</label>
+                    <input type="email" class="form-control" id="email" name="email" aria-describedby="email">
+                </div>
+
+                <div class="mb-3">
+                    <label for="cod" class="form-label">Code</label>
+                    <input type="text" class="form-control" id="cod" name="cod"
+                           aria-describedby="cod">
+                </div>
+            </div>
+            <div class="card-footer">
+                <button type="submit" class="btn btn-success">Регистрация</button>
+                <a href="{% url 'client:home' %}" type="button" class="btn btn-success">Вернуться</a></div>
+        </div>
+    </div>
+</form>
+{% endblock %}
