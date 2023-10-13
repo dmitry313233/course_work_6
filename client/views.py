@@ -1,5 +1,6 @@
 import random
 
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import Http404
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
@@ -29,11 +30,18 @@ def index(request):
     }
     return render(request, 'client/page_list.html', context)
 
-class ClientCreateView(CreateView):  # Создаем базу !
+class ClientCreateView(LoginRequiredMixin, CreateView):  # LoginRequiredMixin запрещает не зарегистрированным пользователям делать действия
     model = Client
     form_class = ClientForm
     template_name = 'client/create_client.html'
     success_url = reverse_lazy('client:home')  # ОН нас сохраняет на главной ЭТОГО НЕ НУЖНО!!!
+
+    def form_valid(self, form):  # Этот метод
+        user = self.request.user  # считывает зарегистрированные данные пользователя
+        self.object = form.save()
+        self.object.owner = user
+        self.object.save()
+        return super().form_valid(form)
 
 
 class ClientListView(ListView):  # Создаем рамку рассылки !
@@ -49,14 +57,14 @@ class ClientListView(ListView):  # Создаем рамку рассылки !
     #     return object_list
 
 
-class ClientUpdateView(UpdateView):  # Редактирование клиента(в карточке)
+class ClientUpdateView(LoginRequiredMixin, UpdateView):  # Редактирование клиента(в карточке)
     model = Client
     form_class = ClientForm
     template_name = 'client/client_update.html'
     success_url = reverse_lazy('client:home')
 
 
-class ClientDetailView(DetailView):
+class ClientDetailView(LoginRequiredMixin, DetailView):
     model = Client
     template_name = 'client/client_detail.html'
 
@@ -72,7 +80,7 @@ class ClientDetailView(DetailView):
     #     return context_data
 
 
-class ClientDeleteView(DeleteView):
+class ClientDeleteView(LoginRequiredMixin, DeleteView):
     model = Client
     template_name = 'client/client_delete.html'
     success_url = reverse_lazy('client:home')
@@ -80,11 +88,23 @@ class ClientDeleteView(DeleteView):
 
 
 
-class MailingSettingsCreateView(CreateView):  # Мы создаём рассылку
+class MailingSettingsCreateView(LoginRequiredMixin, CreateView):  # Мы создаём рассылку
     model = MailingSettings
     form_class = MailingSettingsForm
     template_name = 'client/create_form.html'
     success_url = reverse_lazy('client:mailingSettings_forms')
+
+    def get_form_kwargs(self, form_class=None):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
+
+    def form_valid(self, form):  # Этот метод
+        user = self.request.user  # считывает зарегистрированные данные пользователя
+        self.object = form.save()
+        self.object.owner = user
+        self.object.save()
+        return super().form_valid(form)
 
 
 class MailingSettingsListView(ListView):
@@ -116,7 +136,7 @@ class MailingSettingsListView(ListView):
     #     return object_list
 
 
-class MailingSettingsUpdateView(UpdateView):
+class MailingSettingsUpdateView(LoginRequiredMixin, UpdateView):
     model = MailingSettings
     form_class = MailingSettingsForm
     template_name = 'client/mailingSettings_update.html'
@@ -128,7 +148,7 @@ class MailingSettingsUpdateView(UpdateView):
             raise Http404
         return self.object
 
-class MailingSettingsDeleteView(DeleteView):
+class MailingSettingsDeleteView(LoginRequiredMixin, DeleteView):
     model = MailingSettings
     template_name = 'client/mailingSettings_delete.html'
     success_url = reverse_lazy('client:mailingSettings_forms')
@@ -137,11 +157,18 @@ class MailingSettingsDeleteView(DeleteView):
 
 
 
-class MailingMessageCreateView(CreateView):  # Создание сообщения работает
+class MailingMessageCreateView(LoginRequiredMixin, CreateView):  # Создание сообщения работает
     model = MailingMessage
     form_class = MailingMessageForm
     template_name = 'client/mailing_message_create.html'
     success_url = reverse_lazy('client:mailinmessage_form')
+
+    def form_valid(self, form):  # Этот метод
+        user = self.request.user  # считывает зарегистрированные данные пользователя
+        self.object = form.save()
+        self.object.owner = user
+        self.object.save()
+        return super().form_valid(form)
 
 
 class MailingMessageListView(ListView):   # Отображение сообщений работает
@@ -157,7 +184,7 @@ class MailingMessageListView(ListView):   # Отображение сообще�
     #     return object_list
 
 
-class MailingMessageUpdateView(UpdateView):  # Редактирование сообщения работает
+class MailingMessageUpdateView(LoginRequiredMixin, UpdateView):  # Редактирование сообщения работает
     model = MailingMessage
     form_class = MailingMessageForm
     template_name = 'client/mailin_message_update.html'
@@ -172,13 +199,13 @@ class MailingMessageUpdateView(UpdateView):  # Редактирование со
 
 
 
-class MailingMessageDeleteView(DeleteView):  # Удаление сообщения работает
+class MailingMessageDeleteView(LoginRequiredMixin, DeleteView):  # Удаление сообщения работает
     model = MailingMessage
     template_name = 'client/mailing_message_delete.html'
     success_url = reverse_lazy('client:mailinmessage_form')
 
-    def get_object(self, queryset=None):
-        self.object = super().get_object(queryset)   # Тут мы получаем рассылку mailingSettings_update.html'
+    def get_object(self, queryset=None):  # Пишем для того чтобы другой пользователь не мог удалить наше сообщение
+        self.object = super().get_object(queryset)   # Тут мы получаем рассылку mailing_message_delete.html
         if self.object.owner != self.request.user and not self.request.user.is_superuser:   # "Это строка для менеджера
             raise Http404
         return self.object

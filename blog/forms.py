@@ -6,4 +6,4 @@ from django import forms
 class BlogForm(StyleFormMixin, forms.ModelForm):
     class Meta:
         model = Blog
-        fields = '__all__'
+        exclude = ('count_view',)

@@ -12,7 +12,7 @@ class User(AbstractUser):
     country = models.CharField(max_length=70, **NULLABLE, verbose_name='страна')
     avatar = models.ImageField(upload_to='', **NULLABLE, verbose_name='аватар')
     email = models.EmailField(unique=True, verbose_name='почта')
-    is_active = models.BooleanField("active", default=True, help_text=(
+    is_active = models.BooleanField("active", default=True, help_text=(   # Статус
         "Designates whether this user should be treated as active. "
         "Unselect this instead of deleting accounts."
     )

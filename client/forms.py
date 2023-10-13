@@ -13,14 +13,24 @@ class StyleFormMixin:  # Это для добавления стилей в ко
 class ClientForm(StyleFormMixin, forms.ModelForm):
     class Meta:
         model = Client
-        fields = '__all__'
+        exclude = ('owner',)
 
 
 class MailingSettingsForm(StyleFormMixin, forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user', None)
+        super().__init__(*args, **kwargs)
+        if user.is_superuser:
+            self.fields['clients'].queryset = Client.objects.all()
+        elif user:
+            self.fields['clients'].queryset = Client.objects.filter(owner=user)
+        else:
+            self.fields['clients'].queryset = Client.objects.none()
+
     class Meta:
         model = MailingSettings
         # fields = ('start_time', 'end_time', 'period')
-        fields = '__all__'
+        exclude = ('owner',)
 
 
 #
@@ -33,7 +43,7 @@ class MailingSettingsForm(StyleFormMixin, forms.ModelForm):
 class MailingMessageForm(StyleFormMixin, forms.ModelForm):
     class Meta:
         model = MailingMessage
-        fields = '__all__'
+        exclude = ('owner',)
 #
 #
 # class MailingLogForm(forms.ModelForm):
