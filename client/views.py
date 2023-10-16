@@ -19,14 +19,11 @@ from client.models import Client, MailingSettings, MailingMessage, MailingLog
 def index(request):
     object_list = MailingSettings.objects.all()
     client_list = Client.objects.all()
-    cards = Blog.objects.all()
-    random_cards = random.choice(cards)
 
     context = {
         'mailingSetting_list': object_list,
         'mailingSetting_active': object_list.filter(status=MailingSettings.STATUSES[1][0]),
         'client_list': client_list,
-        'random_cards': random_cards,
     }
     return render(request, 'client/page_list.html', context)
 
@@ -107,7 +104,7 @@ class MailingSettingsCreateView(LoginRequiredMixin, CreateView):  # Мы соз�
         return super().form_valid(form)
 
 
-class MailingSettingsListView(ListView):
+class MailingSettingsListView(LoginRequiredMixin, ListView):
     model = MailingSettings
     template_name = 'client/mailingSettings_forms.html'
 
@@ -120,7 +117,7 @@ class MailingSettingsListView(ListView):
         return object_list
 
 
-    def get_object(self, queryset=None):  # "Это для этого ? Не может управлять списком рассылок.
+    def get_object(self, queryset=None):  #Не может управлять списком рассылок.
         self.object = super().get_object(queryset)   # Тут мы получаем рассылку mailingSettings_update.html'
         if self.object.owner != self.request.user and not self.request.user.is_superuser:   # "Это строка для менеджера
             raise Http404

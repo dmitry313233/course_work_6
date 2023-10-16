@@ -20,46 +20,5 @@
         <a href="{% url 'client:home' %}" type="button"
            class="btn btn-lg btn-block btn-outline-success">Количество клиентов: {{ client_list|length }}</a>
     </div>
-    <div class="row text-center">
-        <div class="col-5">
-            <div class="card mb-4 box-shadow">
-                <div class="card-header">
-                    <h1>Статья</h1>
-                    <div class="card-body">
-                        <h4 class="card-title pricing-card-title">Статья: {{ random_cards.title }}</h4>
-                        <h4 class="card-title pricing-card-title">Дата публикации: {{ random_cards.date_publication }}</h4>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="row text-center">
-        <div class="col-5">
-            <div class="card mb-4 box-shadow">
-                <div class="card-header">
-                    <h1>Статья</h1>
-                    <div class="card-body">
-                        <h4 class="card-title pricing-card-title">Клиент: {{ random_cards.title }}</h4>
-                        <h4 class="card-title pricing-card-title">Дата публикации:{{ random_cards.date_publication }}</h4>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="row text-center">
-        <div class="col-5">
-            <div class="card mb-4 box-shadow">
-                <div class="card-header">
-                    <h1>Статья</h1>
-                    <div class="card-body">
-                        <h4 class="card-title pricing-card-title">Клиент: {{ random_cards.title }}</h4>
-                        <h4 class="card-title pricing-card-title">Дата публикации:{{ random_cards.date_publication }}</h4>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 </div>
 {% endblock %}
-
-
