@@ -16,6 +16,16 @@ from client.models import Client, MailingSettings, MailingMessage, MailingLog
 # Create your views here.
 
 
+
+class IsNotManagerMixin:
+    def get_object(self, queryset=None):  # ЭТО ПИШЕСТЯ ДЛЯ ТOГО ЧТОБЫ МЕНЕДЖЕР НЕ МОГ РЕДАКТИРОВАТЬ РАССЫЛКИ(один объект)
+        self.object = super().get_object(queryset)   # Тут мы получаем рассылку mailingSettings_update.html'
+        user = self.request.user
+        if self.object.owner != user and not user.is_superuser:   # Это строка для менеджера
+            raise Http404
+        return self.object
+
+
 def index(request):
     object_list = MailingSettings.objects.all()
     client_list = Client.objects.all()
@@ -41,17 +51,17 @@ class ClientCreateView(LoginRequiredMixin, CreateView):  # LoginRequiredMixin з
         return super().form_valid(form)
 
 
-class ClientListView(ListView):  # Создаем рамку рассылки !
+class ClientListView(LoginRequiredMixin, ListView):  # Создаем рамку рассылки !
     model = Client
     template_name = 'client/home.html'
 
-    # def get_queryset(self):
-    #     user = self.request.user
-    #     if user.is_superuser or user.is_staff:
-    #         object_list = Client.objects.all()
-    #     else:
-    #         object_list = Client.objects.filter(owner=user)
-    #     return object_list
+    def get_queryset(self):   # Берем из бызы данных
+        user = self.request.user
+        if user.is_superuser or user.is_staff:
+            object_list = Client.objects.all()
+        else:
+            object_list = Client.objects.filter(owner=user)
+        return object_list
 
 
 class ClientUpdateView(LoginRequiredMixin, UpdateView):  # Редактирование клиента(в карточке)
@@ -108,7 +118,7 @@ class MailingSettingsListView(LoginRequiredMixin, ListView):
     model = MailingSettings
     template_name = 'client/mailingSettings_forms.html'
 
-    def get_queryset(self):
+    def get_queryset(self):   # Берем из базы данных
         user = self.request.user
         if user.is_superuser or user.is_staff:
             object_list = MailingSettings.objects.all()
@@ -133,17 +143,18 @@ class MailingSettingsListView(LoginRequiredMixin, ListView):
     #     return object_list
 
 
-class MailingSettingsUpdateView(LoginRequiredMixin, UpdateView):
+class MailingSettingsUpdateView(LoginRequiredMixin, IsNotManagerMixin, UpdateView):
     model = MailingSettings
     form_class = MailingSettingsForm
     template_name = 'client/mailingSettings_update.html'
     success_url = reverse_lazy('client:mailingSettings_forms')
 
-    def get_object(self, queryset=None):  # ЭТО ПИШЕСТЯ ДЛЯ ТOГО ЧТОБЫ МЕНЕДЖЕР НЕ МОГ РЕДАКТИРОВАТЬ РАССЫЛКИ
-        self.object = super().get_object(queryset)   # Тут мы получаем рассылку mailingSettings_update.html'
-        if self.object.owner != self.request.user and not self.request.user.is_superuser:   # Это строка для менеджера
-            raise Http404
-        return self.object
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
+
+
 
 class MailingSettingsDeleteView(LoginRequiredMixin, DeleteView):
     model = MailingSettings

@@ -50,6 +50,7 @@ class MailingSettings(models.Model):  # Рассылка (настройки)
     clients = models.ManyToManyField('Client', verbose_name='клиенты')  # Многи к многим
     message = models.ForeignKey('MailingMessage', on_delete=models.CASCADE, verbose_name='Сообщение', **NULLABLE)
     owner = models.ForeignKey(User, **NULLABLE, on_delete=models.SET_NULL, verbose_name='Собственник')
+
     def __str__(self):
         return f'{self.start_time} / {self.end_time}'
 

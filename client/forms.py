@@ -17,6 +17,12 @@ class ClientForm(StyleFormMixin, forms.ModelForm):
 
 
 class MailingSettingsForm(StyleFormMixin, forms.ModelForm):
+
+    clients = forms.ModelChoiceField(
+        label='Clients',
+        queryset=Client.objects.all(),
+        widget=forms.SelectMultiple(attrs={'class': 'select2'})
+    )
     def __init__(self, *args, **kwargs):
         user = kwargs.pop('user', None)
         super().__init__(*args, **kwargs)
