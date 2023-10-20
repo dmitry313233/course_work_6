@@ -106,8 +106,8 @@ class MailingSettingsCreateView(LoginRequiredMixin, CreateView):  # Мы соз�
         kwargs['user'] = self.request.user
         return kwargs
 
-    def form_valid(self, form):  # Этот метод
-        user = self.request.user  # считывает зарегистрированные данные пользователя
+    def form_valid(self, form):  # Этот метод считывает зарегистрированные данные пользователя
+        user = self.request.user
         self.object = form.save()
         self.object.owner = user
         self.object.save()
@@ -183,13 +183,13 @@ class MailingMessageListView(ListView):   # Отображение сообще�
     model = MailingMessage
     template_name = 'client/mailinmessage_form.html'
 
-    # def get_queryset(self):
-    #     user = self.request.user
-    #     if user.is_superuser or user.is_staff:
-    #         object_list = Client.objects.all()
-    #     else:
-    #         object_list = Client.objects.filter(owner=user)
-    #     return object_list
+    def get_queryset(self):
+        user = self.request.user
+        if user.is_superuser or user.is_staff:
+            object_list = MailingMessage.objects.all()
+        else:
+            object_list = MailingMessage.objects.filter(owner=user)
+        return object_list
 
 
 class MailingMessageUpdateView(LoginRequiredMixin, UpdateView):  # Редактирование сообщения работает

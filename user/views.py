@@ -56,8 +56,10 @@ class UserListView(ListView):
     model = User
 
 
-class UserCreateView(CreateView):
+class UserCreateView(UpdateView):
     model = User
     form_class = UserForm
     template_name = 'user/profile.html'
 
+    def get_object(self, queryset=None):  # Пишем для получения pk пользователя
+        return self.request.user
